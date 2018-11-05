@@ -27,10 +27,6 @@ public final class Encryption {
       return rawString;
     }
   }
-
-  public static String encryptdecryption(String json) {
-
-    return json;
-  }
+  
 
 }

@@ -133,7 +133,7 @@ public class UserController {
     return user;
   }
 
-  public static void delete(int id) {
+  public static boolean deleteUser(int id) {
 
     Log.writeLog(UserController.class.getName(), id, "Actually deleting a user from DB", 0);
 
@@ -143,7 +143,20 @@ public class UserController {
 
     String sql = "DELETE FROM user WHERE id =" + id;
 
-    dbCon.deleteUpdate(sql);
+   return DatabaseController.deleteUser(sql);
 
+  }
+
+  public static boolean updateUser(int id) {
+
+    Log.writeLog(UserController.class.getName(), id, "Actually updating user table in DB", 0);
+
+    if (dbCon == null){
+      dbCon = new DatabaseController();
+    }
+
+    String sql = "UPDATE FROM user WHERE id =" + id;
+
+    return DatabaseController.updateUser(Integer.parseInt(""), "", "", "", "");
   }
 }
