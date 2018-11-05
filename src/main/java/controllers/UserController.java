@@ -132,4 +132,18 @@ public class UserController {
     // Return user
     return user;
   }
+
+  public static void delete(int id) {
+
+    Log.writeLog(UserController.class.getName(), id, "Actually deleting a user from DB", 0);
+
+    if (dbCon == null){
+      dbCon = new DatabaseController();
+    }
+
+    String sql = "DELETE FROM user WHERE id =" + id;
+
+    dbCon.deleteUpdate(sql);
+
+  }
 }
