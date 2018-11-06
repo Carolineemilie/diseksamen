@@ -33,7 +33,7 @@ public class UserEndpoints {
 
             json = Encryption.encryptDecryptXOR(json);
 
-            // TODO: What should happen if something breaks down? FIX 
+            // TODO: What should happen if something breaks down? FIX
             if (user != null) {
                 // Return the user with the status code 200 if the user is found
                 return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
@@ -100,10 +100,20 @@ public class UserEndpoints {
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response loginUser(String x) {
+    public Response loginUser(String body) {
 
-        // Return a response with status 200 and JSON as type
-        return Response.status(400).entity("Endpoint not implemented yet").build();
+        User user = new Gson().fromJson(body, User.class);
+
+        String token = UserController.getLogin(user);
+
+        if (token != "") {
+            // Return a response with status 200 and JSON as type
+            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(token).build();
+        }else{
+            // Return a response with status code 404 - not found
+            return Response.status(404).entity("Could not find user").build();
+
+        }
     }
 
     // TODO: Make the system able to delete users: FIX

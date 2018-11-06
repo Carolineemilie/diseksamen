@@ -4,7 +4,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.sun.org.apache.xml.internal.security.algorithms.Algorithm;
+import com.sun.org.apache.xml.internal.security.algorithms.JCEMapper;
 import model.User;
+import utils.Hashing;
 import utils.Log;
 
 public class UserController {
@@ -132,6 +138,56 @@ public class UserController {
 
     // Return user
     return user;
+  }
+
+  public static String getLogin(User user) {
+
+    if (dbCon == null){
+      dbCon = new DatabaseController();
+  }
+
+  //Making the query for the database
+  String sql = "SELECT * FROM user WHERE email=" + user.getEmail() + "AND password"+ Hashing.shaWithSalt(user.getPassword());
+
+    //Doing the query for the database
+  ResultSet rs = dbCon.query(sql);
+  User userLogin;
+  String token =null;
+
+  try {
+    //Command "next" will start from the top of the result set and therefore get our object, as it only contains a single object
+    if (rs.next()) {
+      userLogin = new User(
+
+             rs.getInt("id"),
+             rs.getString("first_name"),
+             rs.getString("last_name"),
+             rs.getString("password"),
+             rs.getString("email"),
+
+      if (userLogin != null){
+        try {
+          Algorithm algorithm = Algorithm.HMAC256("secret");
+          token = JWT.create()
+                  .withClaim("userId", user.getId())
+                  .withIssuer("auth0")
+                  .sign(algorithm);
+        } catch (JWTCreationException exception) {
+          //Invalid signing configuration/ could not convert claims
+        } finally {
+          return token;
+        }
+      }
+
+    } else {
+      System.out.println("Was unable to find the user");
+    }
+  } catch (SQLException e) {
+    System.out.println(ex.getMessage());
+  }
+
+  //Return null
+    return ""; 
   }
 
   public static User deleteUser(User user) {
