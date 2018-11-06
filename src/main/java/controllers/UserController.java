@@ -1,5 +1,6 @@
 package controllers;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -133,30 +134,49 @@ public class UserController {
     return user;
   }
 
-  public static boolean deleteUser(int id) {
-
-    Log.writeLog(UserController.class.getName(), id, "Actually deleting a user from DB", 0);
+  public static User deleteUser(User user) {
 
     if (dbCon == null){
       dbCon = new DatabaseController();
     }
 
-    String sql = "DELETE FROM user WHERE id =" + id;
+    try {
+      PreparedStatement deleteUser = dbCon.getConnection().prepareStatement("DELETE FROM user WHERE id = ?");
+      deleteUser.setInt(1,user.getId());
 
-   return DatabaseController.deleteUser(sql);
+      deleteUser.executeUpdate();
 
-  }
+    } catch (SQLException sql) {
+      sql.getStackTrace();
+    }
+    return user;
 
-  public static boolean updateUser(int id) {
+    }
 
-    Log.writeLog(UserController.class.getName(), id, "Actually updating user table in DB", 0);
 
-    if (dbCon == null){
+  public static User updateUser(User user) {
+
+    if (dbCon == null) {
       dbCon = new DatabaseController();
     }
 
-    String sql = "UPDATE FROM user WHERE id =" + id;
+    try {
+      PreparedStatement updateUser = DatabaseController.getConnection().prepareStatement("UPDATE user SET firstname =? SET lastname =? SET password =? SET email =? WHERE id =?");
 
-    return DatabaseController.updateUser(Integer.parseInt(""), "", "", "", "");
+      updateUser.setString(1, user.getFirstname());
+      updateUser.setString(2, user.getLastname());
+      updateUser.setString(3, user.getPassword());
+      updateUser.setString(4, user.getEmail());
+      updateUser.setInt(5, user.getId());
+
+      updateUser.executeUpdate();
+
+    } catch (SQLException sql) {
+      sql.printStackTrace();
+    }
+    return user;
+
   }
 }
+
+

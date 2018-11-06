@@ -111,53 +111,5 @@ public class DatabaseController {
     return result;
   }
 
-  public static boolean deleteUser(String sql) {
 
-    if (connection == null) {
-      connection = getConnection();
-    }
-
-    try {
-      PreparedStatement deleteUser = connection.prepareStatement(sql);
-      deleteUser.setString(1, sql);
-
-      int countOfRows = deleteUser.executeUpdate();
-
-      if (countOfRows == 1) {
-        return true;
-      }
-
-    } catch (SQLException e) {
-      e.getErrorCode();
-    }
-    return false;
-  }
-
-  public static boolean updateUser(int id, String firstname, String lastname, String password, String email) {
-
-    if (connection == null) {
-      connection = getConnection();
-    }
-
-    try {
-      PreparedStatement updateUser = connection.prepareStatement("UPDATE users SET id =? SET firstname =? SET lastname =? SET password =? SET email =?");
-
-      updateUser.setInt(1, id);
-      updateUser.setString(2, firstname);
-      updateUser.setString(3, lastname);
-      updateUser.setString(4, password);
-      updateUser.setString(5, email);
-
-      int rowsAffected = updateUser.executeUpdate();
-
-      if (rowsAffected == 1) {
-        return true;
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    return false;
-
-  }
 }
-
