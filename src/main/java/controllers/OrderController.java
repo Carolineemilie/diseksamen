@@ -3,11 +3,16 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import cache.ProductCache;
+import com.cbsexam.OrderEndpoints;
 import model.Address;
 import model.LineItem;
 import model.Order;
 import model.User;
 import utils.Log;
+import cache.OrderCache;
+
 
 public class OrderController {
 
@@ -26,6 +31,9 @@ public class OrderController {
 
     // Build SQL string to query
     String sql = "SELECT * FROM orders where id=" + id;
+
+    OrderCache orderCache = new OrderCache();
+    orderCache.getOrder(true);
 
     // Do the query in the database and create an empty object for the results
     ResultSet rs = dbCon.query(sql);
@@ -168,7 +176,9 @@ public class OrderController {
     }
 
     order.setLineItems(items);
+    connection.commit();
 
+    OrderEndpoints.orderCache.getOrder(true);
     // Return order
     return order;
   }

@@ -3,6 +3,9 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import cache.ProductCache;
+import com.cbsexam.ProductEndpoints;
 import model.Product;
 import utils.Log;
 
@@ -97,8 +100,11 @@ public class ProductController {
       dbCon = new DatabaseController();
     }
 
-    // TODO: Use caching layer.
+    // TODO: Use caching layer.:FIX
     String sql = "SELECT * FROM product";
+
+    ProductCache productCache = new ProductCache();
+    productCache.getProducts(true);
 
     ResultSet rs = dbCon.query(sql);
     ArrayList<Product> products = new ArrayList<Product>();
@@ -159,6 +165,7 @@ public class ProductController {
       // Return null if product has not been inserted into database
       return null;
     }
+    ProductEndpoints.productCache.getProducts(true);
 
     // Return product
     return product;

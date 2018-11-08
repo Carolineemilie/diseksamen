@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import cache.UserCache;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.cbsexam.UserEndpoints;
 import com.sun.org.apache.xml.internal.security.algorithms.Algorithm;
 import com.sun.org.apache.xml.internal.security.algorithms.JCEMapper;
 import model.User;
@@ -30,6 +32,9 @@ public class UserController {
 
     // Build the query for DB
     String sql = "SELECT * FROM user where id=" + id;
+
+    UserCache userCache = new UserCache();
+    userCache.getUsers(true);
 
     // Actually do the query
     ResultSet rs = dbCon.query(sql);
@@ -136,6 +141,8 @@ public class UserController {
       return null;
     }
 
+    UserEndpoints.userCache.getUsers(true);
+    
     // Return user
     return user;
   }
@@ -163,9 +170,10 @@ public class UserController {
              rs.getString("first_name"),
              rs.getString("last_name"),
              rs.getString("password"),
-             rs.getString("email"),
+             rs.getString("email"));
 
-      if (userLogin != null){
+      if (userLogin != null) {
+
         try {
           Algorithm algorithm = Algorithm.HMAC256("secret");
           token = JWT.create()
@@ -187,7 +195,7 @@ public class UserController {
   }
 
   //Return null
-    return ""; 
+    return "";
   }
 
   public static User deleteUser(User user) {
