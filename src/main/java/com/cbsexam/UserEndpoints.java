@@ -119,19 +119,19 @@ public class UserEndpoints {
     }
 
     // TODO: Make the system able to delete users: FIX
-    @DELETE
-    @Path("/delete/{idUser}")
+    @POST
+    @Path("delete")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response deleteUser(@PathParam("idUser") int idUser) {
+    public Response deleteUser(String body) {
 
-        User deleteUser1 = UserController.getUser(idUser);
-        User deleteUser2 = UserController.deleteUser(deleteUser1);
-        String json = new Gson().toJson(deleteUser2);
+       User user = new Gson().fromJson(body, User.class);
+       String token = UserController.getTokenVerifier(user);
 
 
-        if (deleteUser2 != null) {
+        if (token != null) {
+            UserController.deleteUser(user);
             // Return a response with status 200 and JSON as type
-            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User was successfully deleted").build();
         } else {
             // Return a response with status code 404 - not found
             return Response.status(404).entity("Could not find user").build();

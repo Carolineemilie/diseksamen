@@ -1,10 +1,10 @@
 package controllers;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import cache.ProductCache;
 import com.cbsexam.OrderEndpoints;
 import model.Address;
 import model.LineItem;
@@ -95,7 +95,8 @@ public class OrderController {
         // Perhaps we could optimize things a bit here and get rid of nested queries.
         User user = UserController.getUser(rs.getInt("user_id"));
         ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
+        //Bemærk tilføjelse her
+        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id" + "shipping_address_id"));
         Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
 
         // Create an order from the database data
@@ -145,9 +146,12 @@ public class OrderController {
 
     // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts.
 
-    // Insert the product in the DB
+      DatabaseController.getConnection().setAutoCommit(false);
+
+      // Insert the product in the DB
     int orderID = dbCon.insert(
-        "INSERT INTO orders(user_id, billing_address_id, shipping_address_id, order_total, created_at, updated_at) VALUES("
+      "INSERT INTO orders(user_id, billing_address_id, shipping_address_id, order_total, created_at, updated_at) VALUES("
+
             + order.getCustomer().getId()
             + ", "
             + order.getBillingAddress().getId()

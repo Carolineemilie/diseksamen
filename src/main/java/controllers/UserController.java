@@ -7,10 +7,13 @@ import java.util.ArrayList;
 
 import cache.UserCache;
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cbsexam.UserEndpoints;
-import com.sun.org.apache.xml.internal.security.algorithms.Algorithm;
-import com.sun.org.apache.xml.internal.security.algorithms.JCEMapper;
+import com.auth0.jwt.algorithms.Algorithm;
 import model.User;
 import utils.Hashing;
 import utils.Log;
@@ -44,12 +47,12 @@ public class UserController {
       // Get first object, since we only have one
       if (rs.next()) {
         user =
-            new User(
-                rs.getInt("id"),
-                rs.getString("first_name"),
-                rs.getString("last_name"),
-                rs.getString("password"),
-                rs.getString("email"));
+                new User(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
 
         // return the create object
         return user;
@@ -87,12 +90,12 @@ public class UserController {
       // Loop through DB Data
       while (rs.next()) {
         User user =
-            new User(
-                rs.getInt("id"),
-                rs.getString("first_name"),
-                rs.getString("last_name"),
-                rs.getString("password"),
-                rs.getString("email"));
+                new User(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
 
         // Add element to list
         users.add(user);
@@ -121,92 +124,92 @@ public class UserController {
     // Insert the user in the DB
     // TODO: Hash the user password before saving it.
     int userID = dbCon.insert(
-        "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
-            + user.getFirstname()
-            + "', '"
-            + user.getLastname()
-            + "', '"
-            + user.getPassword()
-            + "', '"
-            + user.getEmail()
-            + "', "
-            + user.getCreatedTime()
-            + ")");
+            "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
+                    + user.getFirstname()
+                    + "', '"
+                    + user.getLastname()
+                    + "', '"
+                    + user.getPassword()
+                    + "', '"
+                    + user.getEmail()
+                    + "', "
+                    + user.getCreatedTime()
+                    + ")");
 
     if (userID != 0) {
       //Update the userid of the user before returning
       user.setId(userID);
-    } else{
+    } else {
       // Return null if user has not been inserted into database
       return null;
     }
 
     UserEndpoints.userCache.getUsers(true);
-    
+
     // Return user
     return user;
   }
 
   public static String getLogin(User user) {
 
-    if (dbCon == null){
+    if (dbCon == null) {
       dbCon = new DatabaseController();
-  }
+    }
 
-  //Making the query for the database
-  String sql = "SELECT * FROM user WHERE email=" + user.getEmail() + "AND password"+ Hashing.shaWithSalt(user.getPassword());
+    //Making the query for the database
+    String sql = "SELECT * FROM user WHERE email=" + user.getEmail() + "AND password" + Hashing.shaWithSalt(user.getPassword());
 
     //Doing the query for the database
-  ResultSet rs = dbCon.query(sql);
-  User userLogin;
-  String token =null;
+    ResultSet rs = dbCon.query(sql);
+    User userLogin;
+    String token = null;
 
-  try {
-    //Command "next" will start from the top of the result set and therefore get our object, as it only contains a single object
-    if (rs.next()) {
-      userLogin = new User(
+    try {
+      //Command "next" will start from the top of the result set and therefore get our object, as it only contains a single object
+      if (rs.next()) {
+        userLogin = new User(
 
-             rs.getInt("id"),
-             rs.getString("first_name"),
-             rs.getString("last_name"),
-             rs.getString("password"),
-             rs.getString("email"));
+                rs.getInt("id"),
+                rs.getString("first_name"),
+                rs.getString("last_name"),
+                rs.getString("password"),
+                rs.getString("email"));
 
-      if (userLogin != null) {
+        if (userLogin != null) {
 
-        try {
-          Algorithm algorithm = Algorithm.HMAC256("secret");
-          token = JWT.create()
-                  .withClaim("userId", user.getId())
-                  .withIssuer("auth0")
-                  .sign(algorithm);
-        } catch (JWTCreationException exception) {
-          //Invalid signing configuration/ could not convert claims
-        } finally {
-          return token;
+          try {
+            Algorithm algorithm = Algorithm.HMAC256("secret");
+            token = JWT.create()
+                    .withClaim("userId", user.getId())
+                    .withIssuer("auth0")
+                    .sign(algorithm);
+          } catch (JWTCreationException exception) {
+            //Invalid signing configuration/ could not convert claims
+          } finally {
+            return token;
+          }
         }
+
+      } else {
+        System.out.println("Was unable to find the user");
       }
-
-    } else {
-      System.out.println("Was unable to find the user");
+    } catch (SQLException e) {
+      System.out.println(e.getMessage());
     }
-  } catch (SQLException e) {
-    System.out.println(ex.getMessage());
-  }
 
-  //Return null
+    //Return null
     return "";
   }
 
   public static User deleteUser(User user) {
 
-    if (dbCon == null){
+    if (dbCon == null) {
       dbCon = new DatabaseController();
     }
 
     try {
       PreparedStatement deleteUser = dbCon.getConnection().prepareStatement("DELETE FROM user WHERE id = ?");
-      deleteUser.setInt(1,user.getId());
+      deleteUser.setInt(1, user.getId());
 
       deleteUser.executeUpdate();
 
@@ -215,7 +218,7 @@ public class UserController {
     }
     return user;
 
-    }
+  }
 
 
   public static User updateUser(User user) {
@@ -241,6 +244,62 @@ public class UserController {
     return user;
 
   }
+
+  public static String getTokenVerifier(User user) {
+    //Checking if there is a connection to the database
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+
+    //Building the actual query for the database
+
+    String sql = "SELECT * FROM user WHERE id=" + user.getId();
+
+    //The query is executed
+    ResultSet rs = dbCon.query(sql);
+    User sessionToken;
+    String token = user.getToken();
+
+    try {
+      //will get the first object of the user table, since we only have one
+      if (rs.next()) {
+        sessionToken =
+                new User(
+                        rs.getInt("id"),
+                        rs.getString("first_name"),
+                        rs.getString("last_name"),
+                        rs.getString("password"),
+                        rs.getString("email"));
+
+        if (sessionToken != null) {
+          try {
+            Algorithm algorithm = Algorithm.HMAC256("secret");
+            JWTVerifier verifier = JWT.require(algorithm)
+                    .withIssuer("auth0")
+                    .build();
+            DecodedJWT jwt = verifier.verify(token);
+            Claim claim = jwt.getClaim("userID");
+
+            if (user.getId() == claim.asInt()) {
+              return token;
+            }
+
+          } catch (JWTVerificationException e) {
+            System.out.println(e.getMessage());
+
+          }
+
+        }
+
+      } else {
+        System.out.println("The user could not be found");
+      }
+    } catch (SQLException ex) {
+      System.out.println(ex.getMessage());
+    }
+
+    //Return null
+    return "";
+  }
+
 }
-
-
