@@ -9,7 +9,6 @@ import javax.crypto.spec.PBEKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.spec.InvalidKeySpecException;
 import org.apache.commons.codec.binary.Hex;
-import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
@@ -47,7 +46,7 @@ public final class Hashing {
 
   // TODO: You should add a salt and make this secure: FIX
   public static String shaWithSalt(String password){
-    String salt = "pumpkin_spice";
+    String salt = Config.getSALT();
     String hashedPassword = password + salt;
     return sha(hashedPassword);
   }
@@ -61,7 +60,7 @@ public final class Hashing {
       byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));
 
       // We create the hashed string
-      String sha256hex = new String(Hex.encode(hash));
+      String sha256hex = Hex.encodeHexString(hash);
 
       // And return the string
       return sha256hex;

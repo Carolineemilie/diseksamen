@@ -129,7 +129,7 @@ public class UserController {
                     + "', '"
                     + user.getLastname()
                     + "', '"
-                    + user.getPassword()
+                    + Hashing.shaWithSalt(user.getPassword())
                     + "', '"
                     + user.getEmail()
                     + "', "
@@ -181,6 +181,7 @@ public class UserController {
             Algorithm algorithm = Algorithm.HMAC256("secret");
             token = JWT.create()
                     .withClaim("userId", user.getId())
+                    .withClaim("exp", System.currentTimeMillis() + 1000000000)
                     .withIssuer("auth0")
                     .sign(algorithm);
           } catch (JWTCreationException exception) {
