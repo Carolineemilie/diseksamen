@@ -98,7 +98,7 @@ public class UserEndpoints {
         }
     }
 
-    // TODO: Make the system able to login users and assign them a token to use throughout the system.
+    // TODO: Make the system able to login users and assign them a token to use throughout the system.:FIX?????
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -142,19 +142,18 @@ public class UserEndpoints {
 
     // TODO: Make the system able to update users: FIX
     @PUT
-    @Path("/update/{idUser}")
+    @Path("update")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(String body) {
 
-        User UserUpdate = new Gson().fromJson(body, User.class);
-        User updateUser = UserController.updateUser(UserUpdate);
+        User user = new Gson().fromJson(body, User.class);
+        String token = UserController.getTokenVerifier(user);
 
-        String json = new Gson().toJson(updateUser);
 
-        if (updateUser != null) {
+        if (token != null) {
 
             // Return a response with status 200 and JSON as type
-            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+            return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User was successfully updated").build();
         } else {
             // Return a response with status code 404 - not found
             return Response.status(404).entity("Could not find user").build();

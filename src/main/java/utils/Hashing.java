@@ -9,8 +9,7 @@ import javax.crypto.spec.PBEKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.spec.InvalidKeySpecException;
 import org.apache.commons.codec.binary.Hex;
-import model.User;
-
+import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
@@ -48,14 +47,14 @@ public final class Hashing {
 
   // TODO: You should add a salt and make this secure: FIX
   public static String shaWithSalt(String password){
-    String salt = "pumpkinspice";
+    String salt = "pumpkin_spice";
     String hashedPassword = password + salt;
     return sha(hashedPassword);
   }
   public static String sha(String rawString) {
 
     try {
-      // We load the hashing algoritm we wish to use.
+      // We load the hashing algorithm we wish to use.
       MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
       // We convert to byte array
@@ -77,7 +76,7 @@ public final class Hashing {
   public static void main(String[] args) throws UnsupportedEncodingException {
 
     String password = "password";
-    String salt = "pumpkinspice";
+    String salt = "pumpkin_spice";
     //Number of iterations can be adjusted to adjust the speed of the algorithm
     int iterations = 10000;
     //Required output length of the hashed function

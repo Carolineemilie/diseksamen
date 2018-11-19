@@ -1,6 +1,5 @@
 package cache;
 
-import controllers.ProductController;
 import controllers.UserController;
 import utils.Config;
 import model.User;
@@ -43,4 +42,4 @@ public class UserCache {
     }
 }
 
-}
+
