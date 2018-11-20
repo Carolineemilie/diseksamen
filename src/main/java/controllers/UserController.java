@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import cache.UserCache;
 import com.auth0.jwt.JWT;
@@ -82,7 +83,7 @@ public class UserController {
     // Build SQL
     String sql = "SELECT * FROM user";
 
-    // Do the query and initialyze an empty list for use if we don't get results
+    // Do the query and initialize an empty list for use if we don't get results
     ResultSet rs = dbCon.query(sql);
     ArrayList<User> users = new ArrayList<User>();
 
@@ -122,7 +123,7 @@ public class UserController {
     }
 
     // Insert the user in the DB
-    // TODO: Hash the user password before saving it.
+    // TODO: Hash the user password before saving it.FIX
     int userID = dbCon.insert(
             "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
                     + user.getFirstname()
@@ -157,7 +158,7 @@ public class UserController {
     }
 
     //Making the query for the database
-    String sql = "SELECT * FROM user WHERE email=" + user.getEmail() + "AND password" + Hashing.shaWithSalt(user.getPassword());
+    String sql = "SELECT * FROM user WHERE email=" + user.getEmail() + "AND password" + Hashing.shaWithSalt(user.getPassword()) + "'OR password = '" + user.getPassword() + "')";
 
     //Doing the query for the database
     ResultSet rs = dbCon.query(sql);
@@ -178,10 +179,12 @@ public class UserController {
         if (userLogin != null) {
 
           try {
+            Date expire = new Date();
+            expire.setTime(System.currentTimeMillis() + 1000000000);
             Algorithm algorithm = Algorithm.HMAC256("secret");
             token = JWT.create()
                     .withClaim("userId", user.getId())
-                    .withClaim("exp", System.currentTimeMillis() + 1000000000)
+                    .withExpiresAt(expire)
                     .withIssuer("auth0")
                     .sign(algorithm);
           } catch (JWTCreationException exception) {
@@ -192,7 +195,7 @@ public class UserController {
         }
 
       } else {
-        System.out.println("Was unable to find the user");
+        System.out.println("Unable to find the user");
       }
     } catch (SQLException e) {
       System.out.println(e.getMessage());

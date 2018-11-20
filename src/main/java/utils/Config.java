@@ -113,7 +113,7 @@ public final class Config {
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
     ORDER_TTL = json.get("ORDER_TTL").getAsLong();
     USER_TTL = json.get("USER_TTL").getAsLong();
-    SALT = json.get("ENCRYPTION_KEY").getAsString();
+    SALT = json.get("SALT").getAsString();
 
 
   }

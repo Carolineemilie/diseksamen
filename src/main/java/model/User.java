@@ -7,7 +7,7 @@ public class User {
   public String lastname;
   public String email;
   private String password;
-  private long createdTime;
+  private static long createdTime;
   private String token;
 
   public User(int id, String firstname, String lastname, String password, String email) {
@@ -59,7 +59,7 @@ public class User {
     this.password = password;
   }
 
-  public long getCreatedTime() {
+  public static long getCreatedTime() {
     return createdTime;
   }
 

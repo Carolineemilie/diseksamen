@@ -8,17 +8,24 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.security.spec.InvalidKeySpecException;
+import model.User;
 import org.apache.commons.codec.binary.Hex;
 
 public final class Hashing {
 
 
-  // TODO: You should add a salt and make this secure:
+  // TODO: You should add a salt and make this secure:FIX
+  public static String md5WithSalt(String password, User user) {
+    //Getting the method getCreatedTime from model user to use as salt
+    long salt = user.getCreatedTime();
+    String hashedPassword = password + salt;
+    return md5(hashedPassword);
+  }
   public static String md5(String rawString) {
 
     try {
 
-      // We load the hashing algoritm we wish to use.
+      // We load the hashing algorithm we wish to use.
       MessageDigest md = MessageDigest.getInstance("MD5");
 
       // We convert to byte array
