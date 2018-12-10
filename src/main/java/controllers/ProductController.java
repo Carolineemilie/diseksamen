@@ -17,6 +17,35 @@ public class ProductController {
     dbCon = new DatabaseController();
   }
 
+  public static Product getProductNoneNested(ResultSet rs) {
+
+    Product product = null;
+
+    try {
+      // Get first row and create the object and return it
+      if (rs.next()) {
+        product =
+                new Product(
+                        rs.getInt("id"),
+                        rs.getString("product_name"),
+                        rs.getString("sku"),
+                        rs.getFloat("price"),
+                        rs.getString("description"),
+                        rs.getInt("stock"));
+
+        // Return the product
+        return product;
+      } else {
+        System.out.println("No user found");
+      }
+    } catch (SQLException ex) {
+      System.out.println(ex.getMessage());
+    }
+
+    // Return empty object
+    return product;
+  }
+
   public static Product getProduct(int id) {
 
     // check for connection

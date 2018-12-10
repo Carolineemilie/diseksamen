@@ -6,7 +6,6 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-import java.io.UnsupportedEncodingException;
 import java.security.spec.InvalidKeySpecException;
 import model.User;
 import org.apache.commons.codec.binary.Hex;
@@ -79,36 +78,35 @@ public final class Hashing {
     return rawString;
   }
 
-  public static void main(String[] args) throws UnsupportedEncodingException {
+  public static void main(String[] args) {
 
-    String password = "password";
-    String salt = "pumpkin_spice";
-    //Number of iterations can be adjusted to adjust the speed of the algorithm
-    int iterations = 10000;
-    //Required output length of the hashed function
-    int keyLength = 512;
-    //The password is converted into a char array before it is passed
-    char[] passwordChars = password.toCharArray();
-    byte[] saltBytes = salt.getBytes();
-
-    byte[] hashedBytes = hashPassword(passwordChars, saltBytes, iterations, keyLength);
-    String hashedString = Hex.encodeHexString(hashedBytes);
-
-    System.out.println(hashedString);
+    System.out.println(hashPassword("caroline"));
   }
 
   //This method contains the functionality of PBKDF2
   //The method takes four input variables
-  public static byte[] hashPassword( final char[] password, final byte[] salt, final int iterations, final int keyLength ) {
+  public static String hashPassword( final String password) {
+
+    String salt = "pumpkin_spice";
+
+
+    //The password is converted into a char array before it is passed
+    char[] passwordChars = password.toCharArray();
+
+    byte[] saltBytes = salt.getBytes();
+   //Number of iterations can be adjusted to adjust the speed of the algorithm
+    int iterations = 10000;
+    //Required output length of the hashed function
+    int keyLength = 512;
 
     try {
       SecretKeyFactory skf = SecretKeyFactory.getInstance( "PBKDF2WithHmacSHA512" );
-      PBEKeySpec spec = new PBEKeySpec( password, salt, iterations, keyLength );
+      PBEKeySpec spec = new PBEKeySpec( passwordChars, saltBytes, iterations, keyLength );
       SecretKey key = skf.generateSecret( spec );
 
       byte[] res = key.getEncoded( );
 
-      return res;
+      return Hex.encodeHexString(res);
 
     } catch ( NoSuchAlgorithmException | InvalidKeySpecException e ) {
       throw new RuntimeException( e );

@@ -13,6 +13,35 @@ public class AddressController {
     dbCon = new DatabaseController();
   }
 
+  public static Address getAddressNoneNested(ResultSet rs, String AddressType) {
+
+    Address address = null;
+
+    try {
+      // Get the first row and build an address object
+      if (rs.next()) {
+        address =
+                new Address(
+                        rs.getInt(AddressType + "_id"),
+                        rs.getString(AddressType + "_name"),
+                        rs.getString(AddressType + "_street_address"),
+                        rs.getString(AddressType + "_city"),
+                        rs.getString(AddressType + "_zipcode")
+                );
+
+        // Return our newly added object
+        return address;
+      } else {
+        System.out.println("No address found");
+      }
+    } catch (SQLException ex) {
+      System.out.println(ex.getMessage());
+    }
+
+    // Returns null if we can't find anything.
+    return address;
+  }
+
   public static Address getAddress(int id) {
 
     // Check for DB Connection

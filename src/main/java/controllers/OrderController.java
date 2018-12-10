@@ -31,7 +31,23 @@ public class OrderController {
         }
 
         // Build SQL string to query
-        String sql = "SELECT * FROM orders where id=" + id;
+        String sql = "SELECT\n" +
+                "orders.id as order_id,\n" +
+                "orders.order_total,\n" +
+                "orders.created_at,\n" +
+                "orders.updated_at,\n" +
+                "user.id as user_id,\n" +
+                "user.email as user_email,\n" +
+                "user.password as user_password,\n" +
+                "user.last_name as user_lastname,\n" +
+                "user.first_name as user_firstname\n" +
+                "FROM orders\n" +
+                "LEFT JOIN user ON orders.user_id = user.id\n" +
+                "LEFT JOIN line_item ON orders.id = line_item.order_id\n" +
+                "LEFT JOIN product ON line_item.product_id = product.id\n" +
+                "LEFT JOIN address as billing ON orders.billing_address_id = billing.id\n" +
+                "LEFT JOIN address as shipping ON orders.shipping_address_id = shipping.id\n" +
+                "WHERE orders.id =" + id;
 
         OrderCache orderCache = new OrderCache();
         orderCache.getOrder(true);
@@ -44,10 +60,14 @@ public class OrderController {
             if (rs.next()) {
 
                 // Perhaps we could optimize things a bit here and get rid of nested queries.
-                User user = UserController.getUser(rs.getInt("user_id"));
-                ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-                Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-                Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
+                //User user = UserController.getUser(rs.getInt("user_id"));
+                //ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
+                //Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
+                //Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
+                User user = UserController.getUserNoneNested(rs);
+                ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrderNoneNested(rs);
+                Address billingAddress = AddressController.getAddressNoneNested(rs,"billing");
+                Address shippingAddress = AddressController.getAddressNoneNested(rs,"shipping");
 
                 // Create an object instance of order from the database data
                 order =
@@ -61,7 +81,7 @@ public class OrderController {
                                 rs.getLong("created_at"),
                                 rs.getLong("updated_at"));
 
-                // Returns the build order
+                // Returns the built order
                 return order;
             } else {
                 System.out.println("No order found");
@@ -96,8 +116,7 @@ public class OrderController {
                 // Perhaps we could optimize things a bit here and get rid of nested queries.
                 User user = UserController.getUser(rs.getInt("user_id"));
                 ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-                //Bemærk tilføjelse her
-                Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id" + "shipping_address_id"));
+                Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
                 Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
 
                 // Create an order from the database data

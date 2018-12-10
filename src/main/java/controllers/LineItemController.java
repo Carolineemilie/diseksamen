@@ -15,6 +15,37 @@ public class LineItemController {
     dbCon = new DatabaseController();
   }
 
+  public static ArrayList<LineItem> getLineItemsForOrderNoneNested(ResultSet rs) {
+
+    ArrayList<LineItem> items = new ArrayList<>();
+
+    try {
+
+      // Loop through the results from the DB
+      while (rs.next()) {
+
+        // Construct a product base on the row data with product_id
+        Product product = ProductController.getProduct(rs.getInt("product_id"));
+
+        // Initialize an instance of the line item object
+        LineItem lineItem =
+                new LineItem(
+                        rs.getInt("id"),
+                        product,
+                        rs.getInt("quantity"),
+                        rs.getFloat("price"));
+
+        // Add it to our list of items and return it
+        items.add(lineItem);
+      }
+    } catch (SQLException ex) {
+      System.out.println(ex.getMessage());
+    }
+
+    // Return the list, which might be empty
+    return items;
+  }
+
   public static ArrayList<LineItem> getLineItemsForOrder(int orderID) {
 
     // Check for DB Connection
@@ -35,7 +66,7 @@ public class LineItemController {
       while (rs.next()) {
 
         // Construct a product base on the row data with product_id
-        Product product = ProductController.getProduct(rs.getInt("product_id"));
+        Product product = ProductController.getProductNoneNested(rs);
 
         // Initialize an instance of the line item object
         LineItem lineItem =
