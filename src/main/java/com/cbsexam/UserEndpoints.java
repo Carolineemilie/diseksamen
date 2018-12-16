@@ -4,7 +4,6 @@ import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -35,7 +34,7 @@ public class UserEndpoints {
 
             json = Encryption.encryptDecryptXOR(json);
 
-            // TODO: What should happen if something breaks down? FIX
+            // TODO: What should happen if something breaks down?:FIX
             if (user != null) {
                 // Return the user with the status code 200 if the user is found
                 return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();

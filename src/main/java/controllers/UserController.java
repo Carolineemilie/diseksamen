@@ -153,7 +153,7 @@ public class UserController {
     }
 
     // Insert the user in the DB
-    // TODO: Hash the user password before saving it.FIX
+    // TODO: Hash the user password before saving it.:FIX
     int userID = dbCon.insert(
             "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
                     + user.getFirstname()
