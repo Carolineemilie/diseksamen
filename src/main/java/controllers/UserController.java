@@ -36,11 +36,11 @@ public class UserController {
       if (rs.next()) {
         user =
                 new User(
-                        rs.getInt("id"),
-                        rs.getString("first_name"),
-                        rs.getString("last_name"),
-                        rs.getString("password"),
-                        rs.getString("email"));
+                        rs.getInt("user_id"),
+                        rs.getString("user_first_name"),
+                        rs.getString("user_last_name"),
+                        rs.getString("user_password"),
+                        rs.getString("user_email"));
 
         // return the create object
         return user;

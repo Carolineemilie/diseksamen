@@ -30,10 +30,10 @@ public class LineItemController {
         // Initialize an instance of the line item object
         LineItem lineItem =
                 new LineItem(
-                        rs.getInt("id"),
+                        rs.getInt("line_item_id"),
                         product,
-                        rs.getInt("quantity"),
-                        rs.getFloat("price"));
+                        rs.getInt("line_item_quantity"),
+                        rs.getFloat("line_item_price"));
 
         // Add it to our list of items and return it
         items.add(lineItem);

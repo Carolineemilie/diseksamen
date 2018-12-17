@@ -34,13 +34,32 @@ public class OrderController {
         String sql = "SELECT\n" +
                 "orders.id as order_id,\n" +
                 "orders.order_total,\n" +
-                "orders.created_at,\n" +
-                "orders.updated_at,\n" +
+                "orders.created_at as order_created_at,\n" +
+                "orders.updated_at as order_updated_at,\n" +
                 "user.id as user_id,\n" +
                 "user.email as user_email,\n" +
                 "user.password as user_password,\n" +
                 "user.last_name as user_lastname,\n" +
                 "user.first_name as user_firstname\n" +
+                "line_item.id as line_item_id, \n" +
+                "line_item.quantity as line_item_quantity,\n" +
+                "line_item.price as line_item_price,\n" +
+                "product.id as product_id,\n" +
+                "product.stock as product_stock,\n" +
+                "product.description as product_description,\n" +
+                "product.price as product_price,\n" +
+                "product.sku as product_sku,\n" +
+                "product.product_name \n" +
+                "billing.id as billing_id,\n" +
+                "billing.name as billing_name,\n" +
+                "billing.street_address as billing_street_adress,\n" +
+                "billing.city as billing_city,\n" +
+                "billing.zipcode as billing_zipcode,\n" +
+                "shipping.id as shipping_id,\n" +
+                "shipping.name as shipping_name,\n" +
+                "shipping.street_address as shipping_street_adress,\n" +
+                "shipping.city as shipping_city,\n" +
+                "shipping.zipcode as shipping_zipcode \n" +
                 "FROM orders\n" +
                 "LEFT JOIN user ON orders.user_id = user.id\n" +
                 "LEFT JOIN line_item ON orders.id = line_item.order_id\n" +
@@ -72,14 +91,14 @@ public class OrderController {
                 // Create an object instance of order from the database data
                 order =
                         new Order(
-                                rs.getInt("id"),
+                                rs.getInt("order_id"),
                                 user,
                                 lineItems,
                                 billingAddress,
                                 shippingAddress,
                                 rs.getFloat("order_total"),
-                                rs.getLong("created_at"),
-                                rs.getLong("updated_at"));
+                                rs.getLong("order_created_at"),
+                                rs.getLong("order_updated_at"));
 
                 // Returns the built order
                 return order;

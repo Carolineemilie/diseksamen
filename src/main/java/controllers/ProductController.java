@@ -26,12 +26,12 @@ public class ProductController {
       if (rs.next()) {
         product =
                 new Product(
-                        rs.getInt("id"),
+                        rs.getInt("product_id"),
                         rs.getString("product_name"),
-                        rs.getString("sku"),
-                        rs.getFloat("price"),
-                        rs.getString("description"),
-                        rs.getInt("stock"));
+                        rs.getString("product_sku"),
+                        rs.getFloat("product_price"),
+                        rs.getString("product_description"),
+                        rs.getInt("product_stock"));
 
         // Return the product
         return product;
