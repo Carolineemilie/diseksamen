@@ -78,17 +78,12 @@ public final class Hashing {
     return rawString;
   }
 
-  public static void main(String[] args) {
-
-    System.out.println(hashPassword("caroline"));
-  }
 
   //This method contains the functionality of PBKDF2
   //The method takes four input variables
   public static String hashPassword( final String password) {
 
     String salt = "pumpkin_spice";
-
 
     //The password is converted into a char array before it is passed
     char[] passwordChars = password.toCharArray();

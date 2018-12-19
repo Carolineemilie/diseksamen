@@ -48,9 +48,7 @@ public final class Config {
     return DATABASE_PASSWORD;
   }
 
-  public static String getDatabaseName() {
-    return DATABASE_NAME;
-  }
+  public static String getDatabaseName() { return DATABASE_NAME; }
 
   public static Boolean getEncryption() {
     return ENCRYPTION;

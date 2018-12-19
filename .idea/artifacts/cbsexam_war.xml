@@ -3,7 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/cbsexam_war</output-path>
     <root id="archive" name="cbsexam_war.war">
       <element id="artifact" artifact-name="cbsexam:war exploded" />
-      <element id="artifact" artifact-name="cbsexam:war3" />
     </root>
   </artifact>
 </component>

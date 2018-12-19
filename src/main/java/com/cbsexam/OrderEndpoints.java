@@ -45,7 +45,7 @@ public class OrderEndpoints {
   public Response getOrders() {
 
     // Call our controller-layer in order to get the order from the DB
-    ArrayList<Order> orders = orderCache.getOrder(false);
+    ArrayList<Order> orders = orderCache.getOrder(true);
 
     // TODO: Add Encryption to JSON: FIX
     // We convert the java object to json with GSON library imported in Maven
@@ -54,11 +54,11 @@ public class OrderEndpoints {
     json=Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
-    return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
+    return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
   }
 
   @POST
-  @Path("/")
+  @Path("/create")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createOrder(String body) {
 

@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="cbsexam:war3">
-    <output-path>$PROJECT_DIR$/out/artifacts/cbsexam_war3</output-path>
-    <root id="archive" name="cbsexam_war.war">
-      <element id="artifact" artifact-name="cbsexam:war exploded" />
-      <element id="artifact" artifact-name="cbsexam:war" />
-    </root>
-  </artifact>
-</component>

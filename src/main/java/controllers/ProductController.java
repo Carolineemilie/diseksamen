@@ -129,11 +129,11 @@ public class ProductController {
       dbCon = new DatabaseController();
     }
 
+    //ProductCache productCache = new ProductCache();
+    //productCache.getProducts(true);
+
     // TODO: Use caching layer.:FIX
     String sql = "SELECT * FROM product";
-
-    ProductCache productCache = new ProductCache();
-    productCache.getProducts(true);
 
     ResultSet rs = dbCon.query(sql);
     ArrayList<Product> products = new ArrayList<Product>();
@@ -143,7 +143,7 @@ public class ProductController {
         Product product =
             new Product(
                 rs.getInt("id"),
-                rs.getString("name"),
+                rs.getString("product_name"),
                 rs.getString("sku"),
                 rs.getFloat("price"),
                 rs.getString("description"),
@@ -177,13 +177,13 @@ public class ProductController {
             + product.getName()
             + "', '"
             + product.getSku()
-            + "', '"
+            + "', "
             + product.getPrice()
-            + "', '"
+            + ", '"
             + product.getDescription()
             + "', "
             + product.getStock()
-            + "', "
+            + ", "
             + product.getCreatedTime()
             + ")");
 

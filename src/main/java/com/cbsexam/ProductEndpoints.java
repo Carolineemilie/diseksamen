@@ -26,7 +26,7 @@ public class ProductEndpoints {
   @Path("/{idProduct}")
   public Response getProduct(@PathParam("idProduct") int idProduct) {
 
-    // Call our controller-layer in order to get the order from the DB
+    // Call our controller-layer in order to get the product from the DB
     Product product = ProductController.getProduct(idProduct);
 
     // TODO: Add Encryption to JSON: FIX
@@ -44,8 +44,8 @@ public class ProductEndpoints {
   @Path("/")
   public Response getProducts() {
 
-    // Call our controller-layer in order to get the order from the DB
-    ArrayList<Product> products = productCache.getProducts(false);
+    // Call our controller-layer in order to get the product from the DB
+    ArrayList<Product> products = productCache.getProducts(true);
 
     // TODO: Add Encryption to JSON: FIX
     // We convert the java object to json with GSON library imported in Maven
@@ -54,18 +54,18 @@ public class ProductEndpoints {
     json=Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
-    return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
+    return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
   }
 
   @POST
-  @Path("/")
+  @Path("/create")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createProduct(String body) {
 
     // Read the json from body and transfer it to a product class
     Product newProduct = new Gson().fromJson(body, Product.class);
 
-    // Use the controller to add the user
+    // Use the controller to add the product
     Product createdProduct = ProductController.createProduct(newProduct);
 
     // Get the user back with the added ID and return it to the user
@@ -76,7 +76,7 @@ public class ProductEndpoints {
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
-      return Response.status(400).entity("Could not create user").build();
+      return Response.status(400).entity("Could not create product").build();
     }
   }
 }

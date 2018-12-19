@@ -18,7 +18,11 @@ public class OrderCache {
     // Sets when the cache has been created
     private long created;
 
-    public OrderCache() { this.ttl = Config.getOrdersTtl(); }
+    public OrderCache() {
+        this.ttl = Config.getOrdersTtl();
+        //this.orders = null;
+
+    }
 
     public ArrayList<Order> getOrder(Boolean forceUpdate) {
 

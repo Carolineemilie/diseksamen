@@ -160,6 +160,7 @@ public class UserController {
                     + "', '"
                     + user.getLastname()
                     + "', '"
+                    //+ Hashing.shaWithSalt(user.getPassword())
                     + Hashing.hashPassword(user.getPassword())
                     + "', '"
                     + user.getEmail()
@@ -188,7 +189,7 @@ public class UserController {
     }
 
     //Making the query for the database
-    String sql = "SELECT * FROM user WHERE email=" + user.getEmail() + "AND password" + Hashing.shaWithSalt(user.getPassword()) + "'OR password = '" + user.getPassword() + "')";
+    String sql = "SELECT * FROM user WHERE email= '" + user.getEmail() + "' AND (password= '" + Hashing.shaWithSalt(user.getPassword()) + "'OR password = '" + user.getPassword() + "')";
 
     //Doing the query for the database
     ResultSet rs = dbCon.query(sql);
@@ -218,6 +219,7 @@ public class UserController {
                     .withIssuer("auth0")
                     .sign(algorithm);
           } catch (JWTCreationException exception) {
+            System.out.println(exception.getMessage());
             //Invalid signing configuration/ could not convert claims
           } finally {
             return token;
@@ -280,6 +282,7 @@ public class UserController {
   }
 
   public static String getTokenVerifier(User user) {
+
     //Checking if there is a connection to the database
     if (dbCon == null) {
       dbCon = new DatabaseController();
@@ -312,7 +315,7 @@ public class UserController {
                     .withIssuer("auth0")
                     .build();
             DecodedJWT jwt = verifier.verify(token);
-            Claim claim = jwt.getClaim("userID");
+            Claim claim = jwt.getClaim("userId");
 
             if (user.getId() == claim.asInt()) {
               return token;

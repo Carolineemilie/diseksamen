@@ -13,8 +13,6 @@ import model.User;
 import utils.Log;
 import cache.OrderCache;
 
-
-
 public class OrderController {
 
     private static DatabaseController dbCon;
@@ -30,50 +28,49 @@ public class OrderController {
             dbCon = new DatabaseController();
         }
 
-        // Build SQL string to query
-        String sql = "SELECT\n" +
-                "orders.id as order_id,\n" +
-                "orders.order_total,\n" +
-                "orders.created_at as order_created_at,\n" +
-                "orders.updated_at as order_updated_at,\n" +
-                "user.id as user_id,\n" +
-                "user.email as user_email,\n" +
-                "user.password as user_password,\n" +
-                "user.last_name as user_lastname,\n" +
-                "user.first_name as user_firstname\n" +
-                "line_item.id as line_item_id, \n" +
-                "line_item.quantity as line_item_quantity,\n" +
-                "line_item.price as line_item_price,\n" +
-                "product.id as product_id,\n" +
-                "product.stock as product_stock,\n" +
-                "product.description as product_description,\n" +
-                "product.price as product_price,\n" +
-                "product.sku as product_sku,\n" +
-                "product.product_name \n" +
-                "billing.id as billing_id,\n" +
-                "billing.name as billing_name,\n" +
-                "billing.street_address as billing_street_adress,\n" +
-                "billing.city as billing_city,\n" +
-                "billing.zipcode as billing_zipcode,\n" +
-                "shipping.id as shipping_id,\n" +
-                "shipping.name as shipping_name,\n" +
-                "shipping.street_address as shipping_street_adress,\n" +
-                "shipping.city as shipping_city,\n" +
-                "shipping.zipcode as shipping_zipcode \n" +
-                "FROM orders\n" +
-                "LEFT JOIN user ON orders.user_id = user.id\n" +
-                "LEFT JOIN line_item ON orders.id = line_item.order_id\n" +
-                "LEFT JOIN product ON line_item.product_id = product.id\n" +
-                "LEFT JOIN address as billing ON orders.billing_address_id = billing.id\n" +
-                "LEFT JOIN address as shipping ON orders.shipping_address_id = shipping.id\n" +
-                "WHERE orders.id =" + id;
+                // Build SQL string to query
+                String sql = "SELECT\n" +
+                        "orders.id as order_id,\n" +
+                        "orders.order_total,\n" +
+                        "orders.created_at as order_created_at,\n" +
+                        "orders.updated_at as order_updated_at,\n" +
+                        "user.id as user_id,\n" +
+                        "user.email as user_email,\n" +
+                        "user.password as user_password,\n" +
+                        "user.last_name as user_lastname,\n" +
+                        "user.first_name as user_firstname,\n" +
+                        "line_item.id as line_item_id, \n" +
+                        "line_item.quantity as line_item_quantity,\n" +
+                        "line_item.price as line_item_price,\n" +
+                        "product.id as product_id,\n" +
+                        "product.stock as product_stock,\n" +
+                        "product.description as product_description,\n" +
+                        "product.price as product_price,\n" +
+                        "product.sku as product_sku,\n" +
+                        "product.product_name, \n" +
+                        "billing.id as billing_id,\n" +
+                        "billing.name as billing_name,\n" +
+                        "billing.street_address as billing_street_adress,\n" +
+                        "billing.city as billing_city,\n" +
+                        "billing.zipcode as billing_zipcode,\n" +
+                        "shipping.id as shipping_id,\n" +
+                        "shipping.name as shipping_name,\n" +
+                        "shipping.street_address as shipping_street_adress,\n" +
+                        "shipping.city as shipping_city,\n" +
+                        "shipping.zipcode as shipping_zipcode \n" +
+                        "FROM orders \n" +
+                        "LEFT JOIN user ON orders.user_id = user.id\n" +
+                        "LEFT JOIN line_item ON orders.id = line_item.order_id\n" +
+                        "LEFT JOIN product ON line_item.product_id = product.id\n" +
+                        "LEFT JOIN address as billing ON orders.billing_address_id = billing.id\n" +
+                        "LEFT JOIN address as shipping ON orders.shipping_address_id = shipping.id\n" +
+                        "WHERE orders.id = " + id;
 
         OrderCache orderCache = new OrderCache();
         orderCache.getOrder(true);
 
         // Do the query in the database and create an empty object for the results
         ResultSet rs = dbCon.query(sql);
-        Order order = null;
 
         try {
             if (rs.next()) {
@@ -89,7 +86,7 @@ public class OrderController {
                 Address shippingAddress = AddressController.getAddressNoneNested(rs,"shipping");
 
                 // Create an object instance of order from the database data
-                order =
+                Order order =
                         new Order(
                                 rs.getInt("order_id"),
                                 user,
@@ -101,16 +98,18 @@ public class OrderController {
                                 rs.getLong("order_updated_at"));
 
                 // Returns the built order
+                System.out.println("test");
                 return order;
             } else {
                 System.out.println("No order found");
             }
         } catch (SQLException ex) {
+            ex.printStackTrace();
             System.out.println(ex.getMessage());
         }
 
         // Returns null
-        return order;
+        return null;
     }
 
     /**
@@ -123,8 +122,9 @@ public class OrderController {
         if (dbCon == null) {
             dbCon = new DatabaseController();
         }
+        dbCon = new DatabaseController();
 
-        String sql = "SELECT * FROM order";
+        String sql = "SELECT * FROM orders";
 
         ResultSet rs = dbCon.query(sql);
         ArrayList<Order> orders = new ArrayList<Order>();
@@ -241,8 +241,10 @@ public class OrderController {
                 }
             }
 
-            OrderEndpoints.orderCache.getOrder(true);
         }
+
+        OrderEndpoints.orderCache.getOrder(true);
+
 
         // Return order
         return order;

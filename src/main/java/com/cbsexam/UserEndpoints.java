@@ -75,7 +75,7 @@ public class UserEndpoints {
     }
 
     @POST
-    @Path("/")
+    @Path("/create")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createUser(String body) {
 
@@ -97,7 +97,7 @@ public class UserEndpoints {
         }
     }
 
-    // TODO: Make the system able to login users and assign them a token to use throughout the system.:FIX?????
+    // TODO: Make the system able to login users and assign them a token to use throughout the system.:FIX
     @POST
     @Path("/login")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -118,8 +118,8 @@ public class UserEndpoints {
     }
 
     // TODO: Make the system able to delete users: FIX
-    @POST
-    @Path("delete")
+    @DELETE
+    @Path("/delete")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response deleteUser(String body) {
 
@@ -141,7 +141,7 @@ public class UserEndpoints {
 
     // TODO: Make the system able to update users: FIX
     @PUT
-    @Path("update")
+    @Path("/update")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(String body) {
 
