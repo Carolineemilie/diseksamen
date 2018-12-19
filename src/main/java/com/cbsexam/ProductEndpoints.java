@@ -71,7 +71,7 @@ public class ProductEndpoints {
     // Get the user back with the added ID and return it to the user
     String json = new Gson().toJson(createdProduct);
 
-    // Return the data to the user
+    // Return the data to the product
     if (createdProduct != null) {
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();

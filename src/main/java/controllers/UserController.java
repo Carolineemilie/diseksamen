@@ -21,6 +21,9 @@ import utils.Log;
 
 public class UserController {
 
+  public static UserCache Cache = new UserCache();
+
+
   private static DatabaseController dbCon;
 
   public UserController() {
@@ -33,6 +36,7 @@ public class UserController {
 
     try {
       // Get first object, since we only have one
+      rs.beforeFirst();
       if (rs.next()) {
         user =
                 new User(
@@ -57,6 +61,12 @@ public class UserController {
 
   public static User getUser(int id) {
 
+    for (User object: Cache.getUsers(false)) {
+      if (object.getId() == id) {
+        return object;
+      }
+    }
+
     // Check for connection
     if (dbCon == null) {
       dbCon = new DatabaseController();
@@ -65,8 +75,6 @@ public class UserController {
     // Build the query for DB
     String sql = "SELECT * FROM user where id=" + id;
 
-    UserCache userCache = new UserCache();
-    userCache.getUsers(true);
 
     // Actually do the query
     ResultSet rs = dbCon.query(sql);
@@ -95,7 +103,6 @@ public class UserController {
     // Return null
     return user;
   }
-
 
 
   /**

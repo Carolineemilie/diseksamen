@@ -139,6 +139,7 @@ public class ProductController {
     ArrayList<Product> products = new ArrayList<Product>();
 
     try {
+      rs.beforeFirst();
       while (rs.next()) {
         Product product =
             new Product(

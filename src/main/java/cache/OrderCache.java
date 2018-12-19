@@ -24,7 +24,7 @@ public class OrderCache {
 
     }
 
-    public ArrayList<Order> getOrder(Boolean forceUpdate) {
+    public ArrayList<Order> getOrders(Boolean forceUpdate) {
 
         // If we wish to clear cache, we can set force update.
         // Otherwise we look at the age of the cache and figure out if we should update.

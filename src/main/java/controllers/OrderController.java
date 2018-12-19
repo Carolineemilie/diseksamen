@@ -15,6 +15,8 @@ import cache.OrderCache;
 
 public class OrderController {
 
+    public static OrderCache Cache = new OrderCache();
+
     private static DatabaseController dbCon;
 
     public OrderController() {
@@ -22,6 +24,12 @@ public class OrderController {
     }
 
     public static Order getOrder(int id) {
+
+        for (Order object: Cache.getOrders(false)) {
+            if (object.getId() == id) {
+                  return object;
+            }
+        }
 
         // check for connection
         if (dbCon == null) {
@@ -37,8 +45,8 @@ public class OrderController {
                         "user.id as user_id,\n" +
                         "user.email as user_email,\n" +
                         "user.password as user_password,\n" +
-                        "user.last_name as user_lastname,\n" +
-                        "user.first_name as user_firstname,\n" +
+                        "user.last_name as user_last_name,\n" +
+                        "user.first_name as user_first_name,\n" +
                         "line_item.id as line_item_id, \n" +
                         "line_item.quantity as line_item_quantity,\n" +
                         "line_item.price as line_item_price,\n" +
@@ -50,12 +58,12 @@ public class OrderController {
                         "product.product_name, \n" +
                         "billing.id as billing_id,\n" +
                         "billing.name as billing_name,\n" +
-                        "billing.street_address as billing_street_adress,\n" +
+                        "billing.street_address as billing_street_address,\n" +
                         "billing.city as billing_city,\n" +
                         "billing.zipcode as billing_zipcode,\n" +
                         "shipping.id as shipping_id,\n" +
                         "shipping.name as shipping_name,\n" +
-                        "shipping.street_address as shipping_street_adress,\n" +
+                        "shipping.street_address as shipping_street_address,\n" +
                         "shipping.city as shipping_city,\n" +
                         "shipping.zipcode as shipping_zipcode \n" +
                         "FROM orders \n" +
@@ -65,9 +73,6 @@ public class OrderController {
                         "LEFT JOIN address as billing ON orders.billing_address_id = billing.id\n" +
                         "LEFT JOIN address as shipping ON orders.shipping_address_id = shipping.id\n" +
                         "WHERE orders.id = " + id;
-
-        OrderCache orderCache = new OrderCache();
-        orderCache.getOrder(true);
 
         // Do the query in the database and create an empty object for the results
         ResultSet rs = dbCon.query(sql);
@@ -86,6 +91,8 @@ public class OrderController {
                 Address shippingAddress = AddressController.getAddressNoneNested(rs,"shipping");
 
                 // Create an object instance of order from the database data
+                rs.beforeFirst();
+                rs.next();
                 Order order =
                         new Order(
                                 rs.getInt("order_id"),
@@ -190,7 +197,7 @@ public class OrderController {
         try {
             connection.setAutoCommit(false);
 
-            // Insert the product in the DB
+            // Insert the order in the DB
             int orderID = dbCon.insert(
                     "INSERT INTO orders(user_id, billing_address_id, shipping_address_id, order_total, created_at, updated_at) VALUES("
 
@@ -208,7 +215,7 @@ public class OrderController {
                             + ")");
 
             if (orderID != 0) {
-                //Update the productid of the product before returning
+                //Update the orderid of the order before returning
                 order.setId(orderID);
             }
 
@@ -243,7 +250,7 @@ public class OrderController {
 
         }
 
-        OrderEndpoints.orderCache.getOrder(true);
+        OrderEndpoints.orderCache.getOrders(true);
 
 
         // Return order

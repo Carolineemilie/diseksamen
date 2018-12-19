@@ -22,6 +22,7 @@ public class LineItemController {
     try {
 
       // Loop through the results from the DB
+      rs.beforeFirst();
       while (rs.next()) {
 
         // Construct a product base on the row data with product_id

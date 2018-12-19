@@ -19,6 +19,7 @@ public class AddressController {
 
     try {
       // Get the first row and build an address object
+      rs.beforeFirst();
       if (rs.next()) {
         address =
                 new Address(
